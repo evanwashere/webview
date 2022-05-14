@@ -17,11 +17,11 @@ import { Window } from '@evan/webview';
 // window is bound to bun's lifetime
 // window will not prevent bun from exiting
 const window = new Window({
-  titlebar: true, // enable/disable titlebar (default: true)
+  titlebar: true, // enable/disable titlebar (default: true) [macos-only]
   resizable: true, // enable/disable resizing window (default: true)
   maximized: false, // start window maximized (default: false)
   fullscreen: false, // start window in fullscreen mode (default: false)
-  title: 'Hello World', // window title (default: none)
+  title: 'Hello World', // set window's title (default: none)
   always_on_top: false, // keep window always on top (default: false)
   user_agent: 'bun!!!!', // set user agent (default: webkit's user agent)
 

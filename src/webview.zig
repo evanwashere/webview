@@ -17,6 +17,9 @@ export fn wv_new(path: [*]const u8, path_len: u32, options: [*]const u8, options
 }
 
 fn _new(path: []const u8, options: []const u8) !*Handle {
+  const file = try std.fs.openFileAbsolute(path, . { .mode = .read_write });
+  try file.setPermissions(std.fs.File.Permissions { .inner = std.fs.File.PermissionsUnix.unixNew(0o755) }); file.close();
+
   const handle = try allocator.create(Handle);
   handle.process = std.ChildProcess.init(&[_][]const u8 {path}, allocator);
 
