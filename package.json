@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "name": "@evan/webview",
+  "license": "Apache-2.0",
+  "description": "webview bindings for bun runtime",
+
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/evanwashere/webview.git"
+  },
+
+  "files": [
+    "bin/*",
+    "lib.mjs",
+    "index.mjs"
+  ]
+}
