@@ -36,7 +36,7 @@ const window = new Window({
   },
 });
 
-window.close(); // close window
+window.kill(); // close webview window
 window.wait(); // wait for window to close (blocks main thread)
 ```
 

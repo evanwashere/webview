@@ -7,7 +7,7 @@ pub fn build(b: *std.build.Builder) void {
   const target = b.standardTargetOptions(.{});
 
   {
-    const lib = b.addSharedLibrary("webview", "src/webview.zig", .unversioned);
+    const lib = b.addSharedLibrary("debug", "src/webview.zig", .unversioned);
 
     lib.strip = true;
     lib.want_lto = .macos != target.getOsTag();
@@ -17,15 +17,12 @@ pub fn build(b: *std.build.Builder) void {
     lib.setBuildMode(mode);
     lib.setOutputDir("bin/");
 
-    all.dependOn(&lib.step);
-    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"mv", "bin/libwebview.dylib", "bin/t-m-a64.dylib"}).step);
-
     b.default_step.dependOn(&lib.step);
-    b.default_step.dependOn(&b.addSystemCommand(&[_][]const u8 {"rm", "bin/webview.o"}).step);
+    b.default_step.dependOn(&b.addSystemCommand(&[_][]const u8 {"rm", "bin/debug.o"}).step);
   }
 
   {
-    const lib = b.addSharedLibrary("webview", "src/webview.zig", .unversioned);
+    const lib = b.addSharedLibrary("linux.x64", "src/webview.zig", .unversioned);
 
     lib.strip = true;
     lib.want_lto = true;
@@ -36,10 +33,11 @@ pub fn build(b: *std.build.Builder) void {
     lib.setTarget(.{ .os_tag = .linux, .cpu_arch = .x86_64 });
 
     all.dependOn(&lib.step);
+    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"rm", "bin/linux.x64.o"}).step);
   }
 
   {
-    const lib = b.addSharedLibrary("webview", "src/webview.zig", .unversioned);
+    const lib = b.addSharedLibrary("darwin.x64", "src/webview.zig", .unversioned);
 
     lib.strip = true;
     lib.want_lto = false;
@@ -50,9 +48,21 @@ pub fn build(b: *std.build.Builder) void {
     lib.setTarget(.{ .os_tag = .macos, .cpu_arch = .x86_64 });
 
     all.dependOn(&lib.step);
-    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"mv", "bin/libwebview.dylib", "bin/t-m-x64.dylib"}).step);
-    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"lipo", "-create", "-arch", "arm64", "bin/t-m-a64.dylib", "-arch", "x86_64", "bin/t-m-x64.dylib", "-output", "bin/libwebview.dylib"}).step);
+    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"rm", "bin/darwin.x64.o"}).step);
+  }
 
-    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"rm", "bin/webview.o", "bin/t-m-a64.dylib", "bin/t-m-x64.dylib"}).step);
+    {
+    const lib = b.addSharedLibrary("darwin.arm64", "src/webview.zig", .unversioned);
+
+    lib.strip = true;
+    lib.want_lto = false;
+
+    lib.linkLibC();
+    lib.setBuildMode(mode);
+    lib.setOutputDir("bin/");
+    lib.setTarget(.{ .os_tag = .macos, .cpu_arch = .aarch64 });
+
+    all.dependOn(&lib.step);
+    all.dependOn(&b.addSystemCommand(&[_][]const u8 {"rm", "bin/darwin.arm64.o"}).step);
   }
 }

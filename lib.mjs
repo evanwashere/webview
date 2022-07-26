@@ -1,16 +1,9 @@
-import { ptr, dlopen } from 'bun:ffi';
+import { ptr, dlopen, suffix } from 'bun:ffi';
 
 const utf8e = new TextEncoder();
 
-const path = {
-  linux() { return new URL(`./bin/libwebview.so`, import.meta.url); },
-  darwin() { return new URL(`./bin/libwebview.dylib`, import.meta.url); },
-}[process.platform]().pathname;
-
-const bin_path = {
-  linux() { return new URL(`./bin/webview/bun-webview-linux_${process.arch}`, import.meta.url); },
-  darwin() { return new URL(`./bin/webview/bun-webview-darwin_${process.arch}`, import.meta.url); },
-}[process.platform]().pathname;
+const path = new URL(`./bin/lib${process.platform}.${process.arch}.${suffix}`, import.meta.url).pathname;
+const bin_path = new URL(`./bin/webview/bun-webview-${process.platform}_${process.arch}`, import.meta.url).pathname;
 
 const wv = dlopen(path, {
   wv_kill: { args: ['ptr'], returns: 'void' },
